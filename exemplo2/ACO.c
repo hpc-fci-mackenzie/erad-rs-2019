@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <sdtlib.h>
+#include <stdlib.h>
 #include <omp.h>
 
 // Matriz de caminhos
