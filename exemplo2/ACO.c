@@ -1,6 +1,8 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <omp.h>
+
+#define output stdout
 
 // Matriz de caminhos
 #ifdef DEBUG
@@ -10,6 +12,42 @@ int paths[][size] = { { 0, 11, 10, 12, 4 },
                       { 3, 12,  0, 14, 6 },
                       { 6, 14,  4,  0, 7 },
                       { 7,  9,  8, 12, 0 } };
+
+void print_v_f(int n, float vetor[n])
+{
+  for(int i=0;i<n;i++) {
+    fprintf(output, "%.2f ", vetor[i]);
+  }
+  fprintf(output, "\n");
+}
+
+void print_v_i(int n, int vetor[n])
+{
+  for(int i=0;i<n;i++) {
+    fprintf(output, "%d ", vetor[i]);
+  }
+  fprintf(output, "\n");
+}
+void print_m_f(int n, int m, float vetor[][n])
+{
+  for(int i=0;i<n;i++) {
+    for(int j=0;j<m;j++) {
+      fprintf(output, "%.2f ", vetor[i][j]);
+    }
+    fprintf(output, "\n");
+  }
+}
+
+void print_m_i(int n, int m, int vetor[][n])
+{
+  for(int i=0;i<n;i++) {
+    for(int j=0;j<m;j++) {
+      fprintf(output, "%d ", vetor[i][j]);
+    }
+    fprintf(output, "\n");
+  }
+}
+
 #else
 #define size 20
 int paths[][size] = { { 0,648,2625,549,2185,1898,1458,1752,1963,427,1743,1817,1899,1060,1148,2084,732,1095,1725,2524 },
@@ -36,6 +74,40 @@ int paths[][size] = { { 0,648,2625,549,2185,1898,1458,1752,1963,427,1743,1817,18
 
 void ACO(int max_it, float p, int Q, int paths[][size], int N)
 {
+  int M = size;
+  float best_cost = INFINITY;
+  float t[size][size];
+  int ants[N];
+  float best_paths[N];
+  float ant_paths[N][M+1];
+  float best_ant_paths[N][M+1];
+
+  for(int i=0;i<M;i++) {
+    for(int j=0;j<M;j++) {
+      t[i][j] = 1.0;
+    }
+    t[i][i] = 0;
+  }
+
+  srand(M);
+  for(int i=0;i<N;i++) {
+    ants[i] = rand()%M;
+  }
+
+  for(int i=0;i<N;i++) {
+    best_paths[i] = INFINITY;
+  }
+
+  for(int i=0;i<N;i++) {
+    for(int j=0;j<M+1;j++) {
+      ant_paths[i][j]=0.0;
+      best_ant_paths[i][j]=0.0;
+    }
+  }
+
+  for(int j=0;j<max_it;j++) {
+  }
+
 }
 
 int main(int argc, char* argv[])

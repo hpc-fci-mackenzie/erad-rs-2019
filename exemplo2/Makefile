@@ -11,7 +11,7 @@ all: $(EXEC).c
 	$(CC) $(FLAGS) $(EXEC).c -o $(EXEC)
 
 debug: $(EXEC).c
-	$(CXX) $(FLAGS) $(DEBUGFLAGS) $(EXEC).c -o $(EXEC)
+	$(CC) $(FLAGS) $(DEBUGFLAGS) $(EXEC).c -o $(EXEC)
 
 clean:
 	$(RM) $(EXEC).o $(EXEC)
