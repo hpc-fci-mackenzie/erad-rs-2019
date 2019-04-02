@@ -34,8 +34,23 @@ int paths[][size] = { { 0,648,2625,549,2185,1898,1458,1752,1963,427,1743,1817,18
                       { 2524,2262,103,1866,566,1172,1442,818,688,2071,1583,774,621,1495,2984,442,3012,1634,1011,0 } };
 #endif
 
+void ACO(int max_it, float p, int Q, int paths[][size], int N)
+{
+}
+
 int main(int argc, char* argv[])
 {
+  // 
+  int max_it = 10;
+  //
+  int N = 1000;
+  //
+  float p = 0.1;
+  //
+  int Q = 10;
+
+  ACO(max_it, p, Q, paths, N);
+
   return EXIT_SUCCESS;
 }
 
