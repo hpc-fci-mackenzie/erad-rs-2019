@@ -1,6 +1,6 @@
 # CC=gcc
 FLAGS=-O3 -Wall
-DEBUGFLAGS=-g
+DEBUGFLAGS=-g -DDEBUG
 RM=rm -f
 
 EXEC=ACO
