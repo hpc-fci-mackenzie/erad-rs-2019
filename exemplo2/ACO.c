@@ -72,15 +72,31 @@ int paths[][size] = { { 0,648,2625,549,2185,1898,1458,1752,1963,427,1743,1817,18
                       { 2524,2262,103,1866,566,1172,1442,818,688,2071,1583,774,621,1495,2984,442,3012,1634,1011,0 } };
 #endif
 
+int my_choice(int m, float probability[m], float total)
+{
+  float n = ((float)rand()/(float)(RAND_MAX)) * total;
+  float sum=0;
+  for(int i=0;i<m;i++) {
+    if(n < sum+probability[i]) {
+      return i;
+    }
+    sum += probability[i];
+  }
+  return m-1;
+}
+
 void ACO(int max_it, float p, int Q, int paths[][size], int N)
 {
   int M = size;
   float best_cost = INFINITY;
-  float t[size][size];
+  float t[M][M];
   int ants[N];
   float best_paths[N];
   float ant_paths[N][M+1];
   float best_ant_paths[N][M+1];
+  float current_path[N];
+  float probability[M];
+  int current_node, next_node;
 
   for(int i=0;i<M;i++) {
     for(int j=0;j<M;j++) {
@@ -105,7 +121,37 @@ void ACO(int max_it, float p, int Q, int paths[][size], int N)
     }
   }
 
-  for(int j=0;j<max_it;j++) {
+  for(int it=0;it<max_it;it++) {
+    for(int i=0;i<N;i++) {
+      best_paths[i]=0;
+    }
+    for(int i=0;i<N;i++) {
+      ant_paths[i][0] = ants[i];
+      current_node = ants[i];
+
+      int e = 1;
+      while(e < M) {
+        float this_t = 0;
+        for(int j=0;j<M;j++) {
+          this_t += t[current_node][j];
+        }
+        for(int j=0;j<M;j++) {
+          probability[j] = t[current_node][j] / this_t;
+        }
+        next_node = my_choice(M, probability, this_t);
+        int found = 0;
+        for(int j=0;j<e && !found;j++) {
+          if(ant_paths[i][j] == next_node) {
+            found=1;
+          }
+        }
+        if(found == 1) {
+          ant_paths[i][e] = next_node;
+          e+=1;
+          current_node = next_node;
+        }
+      }
+    }
   }
 
 }
