@@ -147,13 +147,38 @@ void ACO(int max_it, float p, int Q, int paths[][size], int N)
         }
         if(found == 1) {
           ant_paths[i][e] = next_node;
-          e+=1;
+          e++;
           current_node = next_node;
         }
       }
+      ant_paths[i][M] = ant_paths[i][0];
+      for(int j=0;j<M;j++) {
+        current_node = ant_paths[i][j];
+        next_node = ant_paths[i][j+1];
+        current_path[i] += paths[current_node][next_node];
+      }
     }
-  }
 
+    for(int i=0;i<M;i++) {
+      for(int j=0;j<M;j++) {
+        t[i][j] *= (1-p);
+      }
+    }
+    for(int i=0;i<N;i++) {
+      if(current_path[i] < best_paths[i]) {
+        best_paths[i] = current_path[i];
+        for(int j=0;j<M+1;j++) {
+          best_ant_paths[i][j] = ant_paths[i][j];
+        }
+        for(int j=0;j<M-1;j++) {
+          current_node = ant_paths[i][j];
+          next_node = ant_paths[i][j+1];
+          t[current_node][next_node] += Q/paths[current_node][next_node];
+        }
+      }
+    }
+
+  }
 }
 
 int main(int argc, char* argv[])
