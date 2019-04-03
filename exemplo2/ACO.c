@@ -88,7 +88,6 @@ int my_choice(int m, float probability[m], float total)
 void ACO(int max_it, float p, int Q, int paths[][size], int N)
 {
   int M = size;
-  float best_cost = INFINITY;
   float t[M][M];
   int ants[N];
   float best_paths[N];
@@ -177,8 +176,19 @@ void ACO(int max_it, float p, int Q, int paths[][size], int N)
         }
       }
     }
-
   }
+
+  int min=0;
+  for(int i=1;i<N;i++) {
+    if(best_paths[min]<best_paths[i]) {
+      min=i;
+    }
+  }
+  fprintf(output, "Minimo: %d:%.2f\nPath: ", min, best_paths[min]);
+  for(int i=0;i<M;i++) {
+    fprintf(output, "%.2f ", best_ant_paths[min][i]);
+  }
+  fprintf(output, "\n");
 }
 
 int main(int argc, char* argv[])
