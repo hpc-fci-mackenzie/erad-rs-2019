@@ -193,13 +193,13 @@ void ACO(int max_it, float p, int Q, int paths[][size], int N)
 
 int main(int argc, char* argv[])
 {
-  // 
-  int max_it = 10;
-  //
-  int N = 1000;
-  //
+  // iteracoes
+  int max_it = 2;
+  // numero de ants
+  int N = 2;
+  // probabilidade de algum caminho
   float p = 0.1;
-  //
+  // um parametro arbitrario definido pelo usuario
   int Q = 10;
 
   ACO(max_it, p, Q, paths, N);
