@@ -85,7 +85,7 @@ int my_choice(int m, float probability[m], float total)
   return m-1;
 }
 
-void ACO(int max_it, float p, int Q, int paths[][size], int N)
+void ACO(int max_it, float p, float Q, int paths[][size], int N)
 {
   int M = size;
   float t[M][M];
@@ -122,7 +122,7 @@ void ACO(int max_it, float p, int Q, int paths[][size], int N)
 
   for(int it=0;it<max_it;it++) {
     for(int i=0;i<N;i++) {
-      best_paths[i]=0;
+      current_path[i]=0;
     }
     for(int i=0;i<N;i++) {
       ant_paths[i][0] = ants[i];
@@ -140,11 +140,11 @@ void ACO(int max_it, float p, int Q, int paths[][size], int N)
         next_node = my_choice(M, probability, this_t);
         int found = 0;
         for(int j=0;j<e && !found;j++) {
-          if(ant_paths[i][j] == next_node) {
+          if(((int)ant_paths[i][j]) == next_node) {
             found=1;
           }
         }
-        if(found == 1) {
+        if(!found) {
           ant_paths[i][e] = next_node;
           e++;
           current_node = next_node;
@@ -160,7 +160,7 @@ void ACO(int max_it, float p, int Q, int paths[][size], int N)
 
     for(int i=0;i<M;i++) {
       for(int j=0;j<M;j++) {
-        t[i][j] *= (1-p);
+        t[i][j] *= (1.0-p);
       }
     }
     for(int i=0;i<N;i++) {
@@ -176,11 +176,26 @@ void ACO(int max_it, float p, int Q, int paths[][size], int N)
         }
       }
     }
+
+#ifdef DEBUG
+    fprintf(stdout, "It:%d\n", it);
+    int min=0;
+    for(int i=1;i<N;i++) {
+      if(best_paths[i]<best_paths[min]) {
+        min=i;
+      }
+    }
+    fprintf(output, "Minimo: %d:%.2f\nPath: ", min, best_paths[min]);
+    for(int i=0;i<M;i++) {
+      fprintf(output, "%.2f ", best_ant_paths[min][i]);
+    }
+    fprintf(output, "\n");
+#endif
   }
 
   int min=0;
   for(int i=1;i<N;i++) {
-    if(best_paths[min]<best_paths[i]) {
+    if(best_paths[i]<best_paths[min]) {
       min=i;
     }
   }
@@ -194,9 +209,9 @@ void ACO(int max_it, float p, int Q, int paths[][size], int N)
 int main(int argc, char* argv[])
 {
   // iteracoes
-  int max_it = 2;
+  int max_it = 10;
   // numero de ants
-  int N = 2;
+  int N = 1000;
   // probabilidade de algum caminho
   float p = 0.1;
   // um parametro arbitrario definido pelo usuario
