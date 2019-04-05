@@ -4,15 +4,7 @@
 
 #define output stdout
 
-// Matriz de caminhos
 #ifdef DEBUG
-#define size 5
-int paths[][size] = { { 0, 11, 10, 12, 4 },
-                      { 2,  0,  6,  3, 5 },
-                      { 3, 12,  0, 14, 6 },
-                      { 6, 14,  4,  0, 7 },
-                      { 7,  9,  8, 12, 0 } };
-
 void print_v_f(int n, float vetor[n])
 {
   for(int i=0;i<n;i++) {
@@ -47,6 +39,16 @@ void print_m_i(int n, int m, int vetor[][n])
     fprintf(output, "\n");
   }
 }
+#endif
+
+// Matriz de caminhos
+#ifdef TEST
+#define size 5
+int paths[][size] = { { 0, 11, 10, 12, 4 },
+                      { 2,  0,  6,  3, 5 },
+                      { 3, 12,  0, 14, 6 },
+                      { 6, 14,  4,  0, 7 },
+                      { 7,  9,  8, 12, 0 } };
 
 #else
 #define size 20
