@@ -69,7 +69,7 @@ float f(Cell **B, float *item, const int x, const int y, const int nb, const int
       }
     }
   //fprintf(stdout, "\tf:4\n");
-  return abs(sum/nb);
+  return abs(sum/nb*nb);
 }
 
 void ant_dynamic(Ant *ant, Cell **B, const float k1, const float k2, const int m,
@@ -83,8 +83,8 @@ void ant_dynamic(Ant *ant, Cell **B, const float k1, const float k2, const int m
   {
     pd = f(B, ant->item, ant->x, ant->y, nb, m, s_items);
     //pd = (fx < k2) ? 2*fx : 1;
-    fprintf(stdout, "\tDrop; pd: %.2f\n", pd);
-    if (pd >= 0.5)
+    //fprintf(stdout, "\tDrop; pd: %.2f\n", pd);
+    if (pd >= 0.2)
     {
       B[ant->x][ant->y].item = (float*)malloc(size);
       memcpy(B[ant->x][ant->y].item, ant->item, size);
@@ -98,10 +98,10 @@ void ant_dynamic(Ant *ant, Cell **B, const float k1, const float k2, const int m
   // Probability of the ant pick the item
   if (ant_has_item(*ant) == 0 && cell_has_item(ant->x, ant->y, B) == 1)
   {
-    fprintf(stdout, "\tPick.\n");
+    //fprintf(stdout, "\tPick.\n");
     //pp = pow( k1 / (k1 + f(B, B[ant->x][ant->y].item, ant->x, ant->y, nb, m, s_items) ), 2);
     pp = f(B, B[ant->x][ant->y].item, ant->x, ant->y, nb, m, s_items);
-    if (pp < 0.5)
+    if (pp < 0.2)
     {
       ant->item = (float*)malloc(size);
       memcpy(ant->item, B[ant->x][ant->y].item, size);
@@ -143,7 +143,7 @@ void move_ant(Ant *ant, Cell **B, const int m, const int nb, const float k1,
       break;
       case 1: // Move down [x+1,y];
         stuck += 1;
-        if ((ant->x + 1) > m)
+        if ((ant->x + 1) < m)
         {
           if (B[ant->x+1][ant->y].has_ant == 0)
           {
@@ -158,7 +158,7 @@ void move_ant(Ant *ant, Cell **B, const int m, const int nb, const float k1,
       break;
       case 2: // Move right [x,y+1];
         stuck += 1;
-        if ((ant->y + 1) >= 0)
+        if ((ant->y + 1) < m)
         {
           if (B[ant->x][ant->y+1].has_ant == 0)
           {
@@ -187,7 +187,7 @@ void move_ant(Ant *ant, Cell **B, const int m, const int nb, const float k1,
         }
       break;
     }
-    fprintf(stdout, "\tx: %d, y: %d -> stuck: %d.\n", ant->x, ant->y, stuck);
+    //fprintf(stdout, "\tx: %d, y: %d -> stuck: %d.\n", ant->x, ant->y, stuck);
   } while(moved == 0 && stuck <= 4);
 }
 
@@ -304,7 +304,7 @@ int main (int argc, char **argv)
     s_items: number of elementes per item.
   */
 
-  int m = 1000, n_ants = 1000, max_it = 100000, nb = 10, n_items = 10000, s_items = 100;
+  int m = 100, n_ants = 100, max_it = 100000, nb = 10, n_items = 1000, s_items = 100;
   float k1 = 0.5, k2 = 0.5, **items;
   Cell **B;
   Ant *ants = (Ant*)malloc(sizeof(Ant) * n_ants);
