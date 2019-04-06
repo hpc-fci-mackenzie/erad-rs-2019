@@ -69,7 +69,7 @@ float f(Cell **B, float *item, const int x, const int y, const int nb, const int
       }
     }
   //fprintf(stdout, "\tf:4\n");
-  return abs(sum/nb*nb);
+  return abs(sum/(nb*nb));
 }
 
 void ant_dynamic(Ant *ant, Cell **B, const float k1, const float k2, const int m,
@@ -83,7 +83,7 @@ void ant_dynamic(Ant *ant, Cell **B, const float k1, const float k2, const int m
   {
     pd = f(B, ant->item, ant->x, ant->y, nb, m, s_items);
     //pd = (fx < k2) ? 2*fx : 1;
-    //fprintf(stdout, "\tDrop; pd: %.2f\n", pd);
+    fprintf(stdout, "\tDrop; pd: %.2f\n", pd);
     if (pd >= 0.2)
     {
       B[ant->x][ant->y].item = (float*)malloc(size);
@@ -98,9 +98,9 @@ void ant_dynamic(Ant *ant, Cell **B, const float k1, const float k2, const int m
   // Probability of the ant pick the item
   if (ant_has_item(*ant) == 0 && cell_has_item(ant->x, ant->y, B) == 1)
   {
-    //fprintf(stdout, "\tPick.\n");
     //pp = pow( k1 / (k1 + f(B, B[ant->x][ant->y].item, ant->x, ant->y, nb, m, s_items) ), 2);
     pp = f(B, B[ant->x][ant->y].item, ant->x, ant->y, nb, m, s_items);
+    fprintf(stdout, "\tPick; pp: %.2f.\n", pp);
     if (pp < 0.2)
     {
       ant->item = (float*)malloc(size);
@@ -119,7 +119,7 @@ void move_ant(Ant *ant, Cell **B, const int m, const int nb, const float k1,
 {
   int direction, moved = 0, stuck = 0;
 
-  fprintf(stdout, "\tx: %d, y: %d\n", ant->x, ant->y);
+  //fprintf(stdout, "\tx: %d, y: %d\n", ant->x, ant->y);
   do
   {
     direction = rand()%4;
@@ -187,7 +187,7 @@ void move_ant(Ant *ant, Cell **B, const int m, const int nb, const float k1,
         }
       break;
     }
-    //fprintf(stdout, "\tx: %d, y: %d -> stuck: %d.\n", ant->x, ant->y, stuck);
+    fprintf(stdout, "\tx: %d, y: %d -> stuck: %d.\n", ant->x, ant->y, stuck);
   } while(moved == 0 && stuck <= 4);
 }
 
@@ -201,7 +201,8 @@ void simulte(Ant *ants, Cell **B, const int m, const int n_ants, const int nb,
     fprintf(stdout, "\nIteration: %d.\n", it);
     for (i = 0; i < n_ants; i++)
     {
-      fprintf(stdout, "Ant: %d.\n", i);
+      //fprintf(stdout, "%d,%d,%d,%d,%d\n", it, i, ants[i].x, ants[i].y, ants[i].item_id);
+      fprintf(stdout, "Ant: %d\n", i);
       move_ant(&ants[i], B, m, nb, k1, k2, s_items);
     }
   }
@@ -220,6 +221,7 @@ Cell** grid_allocation(const int m)
     {
       B[i][j].item = NULL;
       B[i][j].has_ant = 0;
+      B[i][j].item_id = -1;
     }
 
   return B;
@@ -286,6 +288,14 @@ void initialize(const int m, const int n_ants, const int n_items, const int s_it
 
 }
 
+void grid_print(Cell **B, const int m)
+{
+  int i, j;
+  for (i = 0; i < m; i++)
+    for (j = 0; j < m; j++)
+      fprintf(stdout, "[%d, %d]: %d\n", i,j,B[i][j].item_id);
+}
+
 int main (int argc, char **argv)
 {
   /*
@@ -304,8 +314,8 @@ int main (int argc, char **argv)
     s_items: number of elementes per item.
   */
 
-  int m = 100, n_ants = 100, max_it = 100000, nb = 10, n_items = 1000, s_items = 100;
-  float k1 = 0.5, k2 = 0.5, **items;
+  int m = 100, n_ants = 1000, max_it = 1000, nb = 10, n_items = 5000, s_items = 1000;
+  float k1 = 1, k2 = 1  , **items;
   Cell **B;
   Ant *ants = (Ant*)malloc(sizeof(Ant) * n_ants);
   srand(time(NULL));
@@ -317,6 +327,7 @@ int main (int argc, char **argv)
   initialize(m, n_ants, n_items, s_items, B, ants, items);
   fprintf(stdout, "Simulate\n");
   simulte(ants, B, m, n_ants, nb, s_items, max_it, k1, k2);
+  grid_print(B, m);
 
   return 0;
 }
