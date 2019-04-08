@@ -93,7 +93,7 @@ void ACO(int max_it, float p, float Q, int paths[][size], int N)
   float t[M][M];
   int ants[N];
   float best_paths[N];
-  float ant_paths[N][M+1];
+  int ant_paths[N][M+1];
   int best_ant_paths[N][M+1];
   float current_path[N];
   float probability[M];
@@ -117,7 +117,7 @@ void ACO(int max_it, float p, float Q, int paths[][size], int N)
 
   for(int i=0;i<N;i++) {
     for(int j=0;j<M+1;j++) {
-      ant_paths[i][j]=0.0;
+      ant_paths[i][j]=0;
       best_ant_paths[i][j]=0;
     }
   }
@@ -142,7 +142,7 @@ void ACO(int max_it, float p, float Q, int paths[][size], int N)
         next_node = my_choice(M, probability, this_t);
         int found = 0;
         for(int j=0;j<e && !found;j++) {
-          if(((int)ant_paths[i][j]) == next_node) {
+          if(ant_paths[i][j] == next_node) {
             found=1;
           }
         }
