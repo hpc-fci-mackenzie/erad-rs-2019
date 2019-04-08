@@ -94,7 +94,7 @@ void ACO(int max_it, float p, float Q, int paths[][size], int N)
   int ants[N];
   float best_paths[N];
   float ant_paths[N][M+1];
-  float best_ant_paths[N][M+1];
+  int best_ant_paths[N][M+1];
   float current_path[N];
   float probability[M];
   int current_node, next_node;
@@ -118,7 +118,7 @@ void ACO(int max_it, float p, float Q, int paths[][size], int N)
   for(int i=0;i<N;i++) {
     for(int j=0;j<M+1;j++) {
       ant_paths[i][j]=0.0;
-      best_ant_paths[i][j]=0.0;
+      best_ant_paths[i][j]=0;
     }
   }
 
@@ -189,7 +189,7 @@ void ACO(int max_it, float p, float Q, int paths[][size], int N)
     }
     fprintf(output, "Minimo: %d:%.2f\nPath: ", min, best_paths[min]);
     for(int i=0;i<M;i++) {
-      fprintf(output, "%.2f ", best_ant_paths[min][i]);
+      fprintf(output, "%d ", best_ant_paths[min][i]);
     }
     fprintf(output, "\n");
 #endif
@@ -203,7 +203,7 @@ void ACO(int max_it, float p, float Q, int paths[][size], int N)
   }
   fprintf(output, "Minimo: %d:%.2f\nPath: ", min, best_paths[min]);
   for(int i=0;i<M;i++) {
-    fprintf(output, "%.2f ", best_ant_paths[min][i]);
+    fprintf(output, "%d ", best_ant_paths[min][i]);
   }
   fprintf(output, "\n");
 }
