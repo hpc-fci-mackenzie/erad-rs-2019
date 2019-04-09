@@ -20,6 +20,7 @@ void print_v_i(int n, int vetor[n])
   }
   fprintf(output, "\n");
 }
+
 void print_m_f(int n, int m, float vetor[][n])
 {
   for(int i=0;i<n;i++) {
@@ -42,37 +43,92 @@ void print_m_i(int n, int m, int vetor[][n])
 #endif
 
 // Matriz de caminhos
-#ifdef TEST
-#define size 5
-int paths[][size] = { { 0, 11, 10, 12, 4 },
-                      { 2,  0,  6,  3, 5 },
-                      { 3, 12,  0, 14, 6 },
-                      { 6, 14,  4,  0, 7 },
-                      { 7,  9,  8, 12, 0 } };
+int size = 0;
+int **paths;
 
-#else
-#define size 20
-int paths[][size] = { { 0,648,2625,549,2185,1898,1458,1752,1963,427,1743,1817,1899,1060,1148,2084,732,1095,1725,2524 },
-                      { 648,0,2363,481,2129,2030,1641,1594,1638,557,1214,1492,1710,1126,825,1861,811,1195,1375,2262 },
-                      { 2625,2362,0,1965,669,1274,1541,920,744,2172,1623,875,720,1595,3085,543,3113,1734,1111,103 },
-                      { 549,481,1965,0,1667,1605,1194,1132,1242,431,963,1096,1280,664,1249,1464,1276,799,979,1866 },
-                      { 2185,2129,669,1667,0,621,906,541,643,1733,1504,733,459,1187,2880,479,2791,1169,932,566 },
-                      { 1898,2030,1274,1605,621,0,443,662,978,1482,1669,925,839,1007,2855,929,2541,843,1107,1172 },
-                      { 1458,1641,1541,1194,906,443,0,754,1106,1074,1447,976,968,638,2477,1148,2132,435,1027,1442 },
-                      { 1752,1594,920,1132,541,662,754,0,347,1293,1015,261,209,724,2319,389,2346,841,443,818 },
-                      { 1963,1638,744,1242,643,978,1106,347,0,1511,961,170,183,970,2361,287,2389,1124,388,688 },
-                      { 427,557,2172,431,1733,1482,1074,1293,1511,0,1318,1363,1447,585,1378,1631,1063,641,1275,2071 },
-                      { 1743,1214,1623,963,1504,1669,1447,1015,961,1318,0,813,1078,918,1571,1182,1882,1147,582,1583 },
-                      { 1817,1492,875,1096,733,925,976,261,170,1363,813,0,271,826,2215,373,2242,979,241,774 },
-                      { 1899,1710,720,1280,459,839,968,209,183,1447,1078,271,0,882,2453,192,2408,1049,504,621 },
-                      { 1060,1126,1595,664,1187,1007,638,724,970,585,918,826,882,0,1891,1066,1667,251,798,1495 },
-                      { 1148,825,3085,1249,2880,2855,2477,2319,2361,1378,1571,2215,2453,1891,0,2583,559,2042,2108,2984 },
-                      { 2084,1861,543,1464,479,929,1148,389,287,1631,1182,373,192,1066,2583,0,2612,1220,611,442 },
-                      { 732,811,3113,1276,2791,2541,2132,2346,2389,1063,1882,2242,2408,1667,559,2612,0,1701,2125,3012 },
-                      { 1095,1195,1734,799,1169,843,435,841,1124,641,1147,979,1049,251,2042,1220,1701,0,977,1634 },
-                      { 1725,1375,1111,979,932,1107,1027,443,388,1275,582,241,504,798,2108,611,2125,977,0,1011 },
-                      { 2524,2262,103,1866,566,1172,1442,818,688,2071,1583,774,621,1495,2984,442,3012,1634,1011,0 } };
-#endif
+void alloc_read_paths()
+{
+  int i,j;
+  fscanf(stdin, "%d", &size);
+  paths = (int**) malloc(sizeof(int*)*size);
+  if(paths==NULL) exit(1);
+  for(i=0;i<size;i++) {
+    paths[i] = (int*)malloc(sizeof(int)*size);
+    if(paths[i]==NULL) exit(1);
+    for(j=0;j<size;j++) {
+      fscanf(stdin, "%d", &paths[i][j]);
+    }
+  }
+}
+
+void free_paths()
+{
+  int i;
+  for(i=0;i<size;i++) {
+    free(paths[i]);
+  }
+  free(paths);
+}
+
+float* alloc_f_v(int size)
+{
+  float *mem;
+  mem = (float*)calloc(size, sizeof(float));
+  if(mem == NULL) exit(1);
+  return mem;
+}
+
+int* alloc_i_v(int size)
+{
+  int *mem;
+  mem = (int*)calloc(size, sizeof(int));
+  if(mem == NULL) exit(1);
+  return mem;
+}
+
+float **alloc_f_m(int size)
+{
+  float **mem;
+  int i;
+  mem = (float**)calloc(size, sizeof(float**));
+  if(mem == NULL) exit(1);
+  for(i=0;i<size;i++) {
+    mem[i] = (float*)calloc(size, sizeof(float));
+    if(mem[i]==NULL) exit(1);
+  }
+  return mem;
+}
+
+void free_f_m(float **mem, int size)
+{
+  int i;
+  for(i=0;i<size;i++) {
+    free(mem[i]);
+  }
+  free(mem);
+}
+
+int **alloc_i_m(int l, int c)
+{
+  int **mem;
+  int i;
+  mem = (int**)calloc(l, sizeof(int**));
+  if(mem == NULL) exit(1);
+  for(i=0;i<l;i++) {
+    mem[i] = (int*)calloc(c, sizeof(int));
+    if(mem[i]==NULL) exit(1);
+  }
+  return mem;
+}
+
+void free_i_m(int **mem, int size)
+{
+  int i;
+  for(i=0;i<size;i++) {
+    free(mem[i]);
+  }
+  free(mem);
+}
 
 int my_choice(int m, float probability[m], float total)
 {
@@ -87,16 +143,16 @@ int my_choice(int m, float probability[m], float total)
   return m-1;
 }
 
-void ACO(int max_it, float p, float Q, int paths[][size], int N)
+void ACO(int max_it, float p, float Q, int **paths, int N)
 {
   int M = size;
-  float t[M][M];
-  int ants[N];
-  float best_paths[N];
-  int ant_paths[N][M+1];
-  int best_ant_paths[N][M+1];
-  float current_path[N];
-  float probability[M];
+  float** t = alloc_f_m(M);
+  int* ants = alloc_i_v(N);
+  float* best_paths = alloc_f_v(N);
+  int** ant_paths = alloc_i_m(N, M+1);
+  int** best_ant_paths = alloc_i_m(N, M+1);
+  float* current_path = alloc_f_v(N);
+  float* probability = alloc_f_v(M);
   int current_node, next_node;
 
   for(int i=0;i<M;i++) {
@@ -219,7 +275,11 @@ int main(int argc, char* argv[])
   // um parametro arbitrario definido pelo usuario
   int Q = 10;
 
+  alloc_read_paths();
+
   ACO(max_it, p, Q, paths, N);
+
+  free_paths();
 
   return EXIT_SUCCESS;
 }
