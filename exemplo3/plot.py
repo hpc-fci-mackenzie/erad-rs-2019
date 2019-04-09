@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-n = 120
+n = 100
 
 csv = np.genfromtxt ('ACA.out', delimiter="")
 

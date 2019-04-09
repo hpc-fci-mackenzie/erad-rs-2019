@@ -1,5 +1,5 @@
 # CC=gcc
-FLAGS=-O3 -lm -fopenmp
+FLAGS=-lm -fopenmp -O3
 DEBUGFLAGS=-g
 RM=rm -f
 

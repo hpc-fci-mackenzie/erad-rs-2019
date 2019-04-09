@@ -22,23 +22,33 @@ int ant_has_item(Ant *ant)
   return res;
 }
 
-float cosine_similarity(float *item1, float *item2, const int n)
+double manhattan_distance(double *item1, double *item2, const int n)
 {
   int i;
-  float dot = 0.0, denom_a = 0.0, denom_b = 0.0 ;
+  double sum = 0.0;
   for(i = 0; i < n; ++i)
   {
-    dot += item1[i] * item2[i];
-    denom_a += item1[i] * item1[i];
-    denom_b += item2[i] * item2[i];
+    sum += fabsf(item1[i]-item2[i]);
   }
-  return fabsf(dot / (sqrtf(denom_a) * sqrtf(denom_b)));
+  return sum/(double)n;
 }
 
-float f(Cell **B, float *item, const int x, const int y, const int nb, const int m, const int s_items)
+double euclidian_distance(double *item1, double *item2, const int n)
+{
+  int i;
+  double sum = 0.0;
+
+  for (i = 0; i < n; i++)
+  {
+    sum += pow(item1[i] - item2[i], 2);
+  }
+  return sqrt(sum/(double)n);
+}
+
+double f(Cell **B, double *item, const int x, const int y, const int nb, const int m, const int s_items)
 {
   int i, j;
-  float sum = 0.0;
+  double sum = 0.0, cont = 0.0;
   for (i = x - nb; i < x + nb; i++)
     for (j = y - nb; j < y + nb; j++)
     {
@@ -46,26 +56,28 @@ float f(Cell **B, float *item, const int x, const int y, const int nb, const int
       {
         if (cell_has_item(i, j, B) == 1)
         {
-          sum += cosine_similarity(item, B[i][j].item, s_items);
+          //sum += euclidian_distance(item, B[i][j].item, s_items);
+          sum += manhattan_distance(item, B[i][j].item, s_items);
         }
       }
     }
-  return fabsf(sum/(2*(nb*nb)));
+  return fabs(sum/(nb*nb));
 }
 
-void ant_dynamic(Ant *ant, Cell **B, const int m, const int nb, const int s_items)
+void ant_dynamic(Ant *ant, Cell **B, const int m, const int nb, const int s_items, const double max_value)
 {
-  float pp, pd, fx;
-  size_t size = sizeof(float)*s_items;
+  double pp, pd, fx;
+  size_t size = sizeof(double)*s_items;
 
   //Probability of the ant drop the item
   if (ant_has_item(ant) == 1 && cell_has_item(ant->x, ant->y, B) == 0)
   {
     pd = f(B, ant->item, ant->x, ant->y, nb, m, s_items);
-    //fprintf(stdout, "\tDrop; pd: %f\n", pd);
-    if (pd >= 0.9)
+    pd = 1-(pd/max_value);
+    //fprintf(stderr, "\tDrop; pd: %f\n", pd);
+    if (pd >= 0.6)
     {
-      B[ant->x][ant->y].item = (float*)malloc(size);
+      B[ant->x][ant->y].item = (double*)malloc(size);
       memcpy(B[ant->x][ant->y].item, ant->item, size);
       free(ant->item);
       ant->item = NULL;
@@ -80,10 +92,11 @@ void ant_dynamic(Ant *ant, Cell **B, const int m, const int nb, const int s_item
   if (ant_has_item(ant) == 0 && cell_has_item(ant->x, ant->y, B) == 1)
   {
     pp = f(B, B[ant->x][ant->y].item, ant->x, ant->y, nb, m, s_items);
-    //fprintf(stdout, "\tPick; pp: %f\n", pp);
-    if (pp <= 0.2)
+    pp = 1-(pp/max_value);
+    //fprintf(stderr, "\tPick; pp: %f\n", pp);
+    if (pp <= 0.6)
     {
-      ant->item = (float*)malloc(size);
+      ant->item = (double*)malloc(size);
       memcpy(ant->item, B[ant->x][ant->y].item, size);
       free(B[ant->x][ant->y].item);
       B[ant->x][ant->y].item = NULL;
@@ -95,9 +108,9 @@ void ant_dynamic(Ant *ant, Cell **B, const int m, const int nb, const int s_item
   }
 }
 
-void move_ant(Ant *ant, Cell **B, const int m, const int nb, const int s_items)
+void move_ant(Ant *ant, Cell **B, const int m, const int nb, const int s_items, const double max_value)
 {
-  int direction, moved = 0, stuck = 0;
+  int direction, moved = 0, stuck = 0, step = 5;
 
   do
   {
@@ -107,56 +120,56 @@ void move_ant(Ant *ant, Cell **B, const int m, const int nb, const int s_items)
     {
       case 0: // Move up [x-1,y];
         stuck += 1;
-        if ((ant->x - 1) >= 0)
+        if ((ant->x - step) >= 0)
         {
-          if (B[ant->x-1][ant->y].has_ant == 0)
+          if (B[ant->x-step][ant->y].has_ant == 0)
           {
             B[ant->x][ant->y].has_ant = 0;
-            ant->x -= 1;
+            ant->x -= step;
             B[ant->x][ant->y].has_ant = 1;
-            ant_dynamic(ant, B, m, nb, s_items);
+            ant_dynamic(ant, B, m, nb, s_items, max_value);
             moved = 1;
           }
         }
       break;
       case 1: // Move down [x+1,y];
         stuck += 1;
-        if ((ant->x + 1) < m)
+        if ((ant->x + step) < m)
         {
-          if (B[ant->x+1][ant->y].has_ant == 0)
+          if (B[ant->x+step][ant->y].has_ant == 0)
           {
             B[ant->x][ant->y].has_ant = 0;
-            ant->x += 1;
+            ant->x += step;
             B[ant->x][ant->y].has_ant = 1;
-            ant_dynamic(ant, B, m, nb, s_items);
+            ant_dynamic(ant, B, m, nb, s_items, max_value);
             moved = 1;
           }
         }
       break;
       case 2: // Move right [x,y+1];
         stuck += 1;
-        if ((ant->y + 1) < m)
+        if ((ant->y + step) < m)
         {
           if (B[ant->x][ant->y+1].has_ant == 0)
           {
             B[ant->x][ant->y].has_ant = 0;
-            ant->y += 1;
+            ant->y += step;
             B[ant->x][ant->y].has_ant = 1;
-            ant_dynamic(ant, B, m, nb, s_items);
+            ant_dynamic(ant, B, m, nb, s_items, max_value);
             moved = 1;
           }
         }
       break;
       case 3: // Move left [x,y-1];
         stuck += 1;
-        if ((ant->y - 1) >= 0)
+        if ((ant->y - step) >= 0)
         {
-          if (B[ant->x][ant->y-1].has_ant == 0)
+          if (B[ant->x][ant->y-step].has_ant == 0)
           {
             B[ant->x][ant->y].has_ant = 0;
-            ant->y -= 1;
+            ant->y -= step;
             B[ant->x][ant->y].has_ant = 1;
-            ant_dynamic(ant, B, m, nb, s_items);
+            ant_dynamic(ant, B, m, nb, s_items, max_value);
             moved = 1;
           }
         }
@@ -166,7 +179,7 @@ void move_ant(Ant *ant, Cell **B, const int m, const int nb, const int s_items)
 }
 
 void simulte(Ant *ants, Cell **B, const int m, const int n_ants, const int nb,
-            const int s_items, const int max_it)
+            const int s_items, const int max_it, const double max_value)
 {
   int it, ant;
 
@@ -174,7 +187,7 @@ void simulte(Ant *ants, Cell **B, const int m, const int n_ants, const int nb,
   {
     for (ant = 0; ant < n_ants; ant++)
     {
-      move_ant(&ants[ant], B, m, nb, s_items);
+      move_ant(&ants[ant], B, m, nb, s_items, max_value);
       //fprintf(stdout, "%d,%d,%d,%d,%d\n", it, ant, ants[ant].x, ants[ant].y, ants[ant].item_id);
     }
   }
@@ -199,30 +212,29 @@ Cell** grid_allocation(const int m)
   return B;
 }
 
-float** items_allocation(const int n_items, const int s_items)
+double** items_allocation(const int n_items, const int s_items, const double max_value)
 {
-  float **items;
+  double **items;
   int i, j;
 
-  items = (float **)malloc(n_items * sizeof(float*));
-  for(i = 0; i < n_items; i++) items[i] = (float*)malloc(s_items * sizeof(float));
+  items = (double **)malloc(n_items * sizeof(double*));
+  for(i = 0; i < n_items; i++) items[i] = (double*)malloc(s_items * sizeof(double));
 
   for (i = 0; i < n_items; i++)
     for (j = 0; j < s_items; j++)
     {
-      items[i][j] = rand()%1000;
+      items[i][j] = i*j;//rand()%(int)max_value;
     }
-
   return items;
 }
 
 /* Initialize grid with ants and items ramdomilly.
   In the first step ants are carryng no items.
 */
-void initialize(const int m, const int n_ants, const int n_items, const int s_items, Cell **B, Ant *ants, float **items)
+void initialize(const int m, const int n_ants, const int n_items, const int s_items, Cell **B, Ant *ants, double **items)
 {
   int i = 0, j, x, y, ant_prob, item_prob;
-  size_t size = sizeof(float)*s_items;
+  size_t size = sizeof(double)*s_items;
 
   // Initialize Cell with items
   do
@@ -231,7 +243,7 @@ void initialize(const int m, const int n_ants, const int n_items, const int s_it
     y = rand()%m;
     if (cell_has_item(x, y, B) == 0 && B[x][y].has_ant == 0)
     {
-      B[x][y].item = (float*)malloc(size);
+      B[x][y].item = (double*)malloc(size);
       memcpy(B[x][y].item, items[i], size);
       B[x][y].item_id = i;
       i++;
@@ -287,19 +299,19 @@ int main (int argc, char **argv)
   */
 
   // A razão de proporcionalidade de m -> n_ants e n_items é de uma ordem de grandeza.
-  int m = 120, n_ants = 300, max_it = 100000000, nb = 10, n_items = 500, s_items = 100;
-  float **items;
+  int m = 100, n_ants = 100, max_it = 1000000, nb = 30, n_items = 500, s_items = 100;
+  double **items, max_value = 1000;
   Cell **B;
   Ant *ants = (Ant*)malloc(sizeof(Ant) * n_ants);
   srand(time(NULL));
   //fprintf(stdout, "Allocating B\n");
   B = grid_allocation(m);
   //fprintf(stdout, "Allocating items\n");
-  items = items_allocation(n_items, s_items);
+  items = items_allocation(n_items, s_items, max_value);
   //fprintf(stdout, "Initialize\n");
   initialize(m, n_ants, n_items, s_items, B, ants, items);
   //fprintf(stdout, "Simulate\n");
-  simulte(ants, B, m, n_ants, nb, s_items, max_it);
+  simulte(ants, B, m, n_ants, nb, s_items, max_it, max_value);
   grid_print(B, m);
 
   return 0;

@@ -3,7 +3,7 @@
 
 typedef struct Cell
 {
-  float* item;
+  double* item;
   int item_id;
   int has_ant;
 } Cell;
@@ -11,7 +11,7 @@ typedef struct Cell
 typedef struct Ant
 {
   int x, y;
-  float* item;
+  double* item;
   int item_id;
 } Ant;
 
