@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stdio.h>
 
 int partition(int* A, int len)
@@ -32,14 +33,16 @@ void quicksort(int* A, int len)
 
 int main (void)
 {
-  int a[] = {4, 65, 2, -31, 0, 99, 2, 83, 782, 1};
-  int n = sizeof a / sizeof a[0];
+  int *a;
+  int n;
  
   int i;
+
+  fscanf(stdin, "%d", &n);
+  a = (int*) malloc(sizeof(int) * n);
   for (i = 0; i < n; i++) {
-    printf("%d ", a[i]);
+    fscanf(stdin, "%d", a+i);
   }
-  printf("\n");
  
   quicksort(a, n);
  
