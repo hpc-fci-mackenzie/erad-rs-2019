@@ -1,4 +1,7 @@
-int partition(int* A, int p, int q) {
+#include <stdio.h>
+
+int partition(int* A, int len)
+{
   int pivot = A[len / 2];
  
   int i, j;
@@ -13,14 +16,38 @@ int partition(int* A, int p, int q) {
     A[j]     = temp;
   }
 
-  return pivot; 
+  return i;
 }
  
-void quicksort(int* A, int p, int q) {
-  if(p < q) {
-    int pivot = partition(A, p, q);
+void quicksort(int* A, int len)
+{
+  if (len < 2) return;
+
+  int pivot = partition(A, len);
+
+  quicksort(A, pivot);
+  quicksort(A + pivot, len - pivot);
  
-    quicksort(A, p, pivot - 1);
-    quicksort(A, pivot + 1, q);
+}
+
+int main (void)
+{
+  int a[] = {4, 65, 2, -31, 0, 99, 2, 83, 782, 1};
+  int n = sizeof a / sizeof a[0];
+ 
+  int i;
+  for (i = 0; i < n; i++) {
+    printf("%d ", a[i]);
   }
+  printf("\n");
+ 
+  quicksort(a, n);
+ 
+  for (i = 0; i < n; i++) {
+    printf("%d ", a[i]);
+  }
+  printf("\n");
+ 
+  return 0;
 }
+
