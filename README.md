@@ -1,5 +1,6 @@
 # Paralelismo de tarefas utilizando OpenMP 4.5
 Este respositório foi criado com o intúiro de facilitar o desenvolvimento do trabalho prático aos alunos do minucurso *Paralelismo de tarefas utilizando OpenMP 4.5* da *XIX Escola Regional de Alto Desemepenho da Região Sul*.
+O material utilizado na ERAD/RS 2019 pode ser obtido diretamente no [site da Escola](https://www.setrem.com.br/erad2019/data/pdf/minicursos/mc06.pdf), e a apresentação no [ResearchGate/DOI](https://dx.doi.org/10.13140/RG.2.2.36790.55362).
 
 Os exemplos apresentados neste minicurso estão desenvolvidos na linguagem C com a utilização de diretivas de compilação do padrão *OpenMP 4.5* para implementação da estratégia de paralelismo à nível de tarefas. Desta forma, é necessário que o aluno faça a instalação de alguns pacotes. É importante também resssaltar que estamos considerando que o aluno utiliza um sistema operacional Linux e, dependendo da distribuição, os comandos aqui apresentados podem sofrer alguma alteração.
 
