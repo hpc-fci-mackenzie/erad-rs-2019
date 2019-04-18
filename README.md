@@ -19,6 +19,6 @@ Para que o aluno consiga utilizar o conteúdo deste repositório, é necessário
 Após a instalação dos pacotes necessários, o aluno deve *clonar* este repositório em sua máquina. Para que isso seja feito, o comando *git clone https://github.com/hpc-fci-mackenzie/erad-rs-2019.git* deve ser executado dentro do diretório de trabalho definido.
 
 ## Executando os exemplos
-Há 3 exemplos para este minucurso. O Exemplo 1 é a implementação do algoritmo *quicksort*, o exemplo 2 é a implementação do algoritmo ACO e o exemplo 3 é a implementação do algoritmo ACO. O detalhamento dos algoritmos está disponível no material de apoio que também está contido neste repositório.
+Há 4 exemplos para este minucurso. O Exemplo 1 é a implementação do algoritmo *quicksort*, o exemplo 2 é a implementação do algoritmo ACO e o exemplo 3 é a implementação do algoritmo ACO. O exemplo 4 é a implementação do algoritmo de solução de sistemas de equações usando o método de elimininação de Gauss para aplicação de técnicas de dependência de tarefas. O detalhamento dos algoritmos está disponível no material de apoio que também está contido neste repositório.
 
 Em cada um dos diretórios de exemplo existe um arquivo nomeado como Makefile. Este arquivo contém toda a definição da compilação do exemplo, bastando apenas a execução do comando *make* dentro do diretório. Se houver algum erro, verifique se a etapa de pré-requisitos está completa.
